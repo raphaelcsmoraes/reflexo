@@ -1,0 +1,32 @@
+{
+  "name": "reflexo",
+  "version": "1.0.0",
+  "description": "Reflexo — Quebra-cabeça diário de simetria. Um jogo minimalista focado em padrões de espelho.",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000 || npx http-server",
+    "dev": "python -m http.server 8000"
+  },
+  "keywords": [
+    "jogo",
+    "puzzle",
+    "diário",
+    "simetria",
+    "web-game",
+    "javascript",
+    "html5"
+  ],
+  "author": "Seu Nome <seu.email@example.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seu-usuario/reflexo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/seu-usuario/reflexo/issues"
+  },
+  "homepage": "https://jogo-reflexo.netlify.app",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

@@ -5,6 +5,14 @@ Todas as mudanças notáveis do Reflexo são documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [Não lançado]
+
+### Adicionado
+- Documentação técnica separada por tecnologia na pasta `docs/`: `HTML.md` (estrutura), `CSS.md` (estilo) e `JAVASCRIPT.md` (lógica), com um índice em `docs/README.md`
+
+### Corrigido
+- Seção "Estrutura do Projeto" no README, que listava arquivos inexistentes — agora reflete a estrutura real do repositório
+
 ## [1.2.0] - 2026-06-16
 
 ### Adicionado

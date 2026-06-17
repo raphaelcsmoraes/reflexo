@@ -46,10 +46,9 @@ Reflexo é inspirado em jogos diários populares como Wordle, mas com foco em si
    - Essas células marcadas com um ícone de raio NÃO seguem a regra de simetria
    - Elas devem ter símbolos *diferentes* de seus pares
 
-3. **Cada linha deve conter exatamente:**
-   - 2 Sóis ☀️
-   - 2 Luas 🌙
-   - 2 Estrelas ⭐
+3. **Cada lado da linha deve ter 1 de cada símbolo**
+   - De cada lado da linha do espelho (3 quadrados), deve haver exatamente 1 Sol ☀️, 1 Lua 🌙 e 1 Estrela ⭐
+   - Ou seja, símbolos iguais nunca se repetem do mesmo lado
 
 ### Como Ganhar
 
@@ -190,21 +189,28 @@ Abra `index.html` e procure por `:root { ... }` no bloco `<style>`:
 }
 ```
 
-### Adicionar Mais Puzzles
+### Geração de Puzzles
 
-Procure pela array `puzzleBank` no bloco `<script>` e adicione novos puzzles:
+O jogo **não usa um banco fixo de puzzles**. Em vez disso, gera um tabuleiro novo e único a cada dia automaticamente, a partir da data (no fuso de Brasília). Isso significa que os puzzles nunca acabam e nunca se repetem.
+
+A dificuldade varia conforme o dia da semana, numa curva suave:
 
 ```javascript
-var puzzleBank = [
-  // Puzzle 1
-  [['sun','moon','star','star','moon','sun'], ...],
-  // Puzzle 2
-  [['moon','star','sun','sun','star','moon'], ...],
-  // Adicione novos aqui
-];
+var difficultyByWeekday = {
+  1: {crackRows:1, extra:3}, // Segunda - mais fácil
+  2: {crackRows:1, extra:2}, // Terça
+  3: {crackRows:2, extra:2}, // Quarta
+  4: {crackRows:2, extra:1}, // Quinta
+  5: {crackRows:3, extra:1}, // Sexta
+  6: {crackRows:3, extra:0}, // Sábado
+  0: {crackRows:4, extra:0}  // Domingo - mais difícil
+};
 ```
 
-**Cada puzzle deve ser uma matriz 6×6 com valores: `'sun'`, `'moon'` ou `'star'`**
+- `crackRows`: quantas linhas terão pares "raio" (mais raios = mais difícil)
+- `extra`: quantas células extras são reveladas além do mínimo (mais células = mais fácil)
+
+Para ajustar a dificuldade, modifique esses valores. O gerador garante que todo tabuleiro tenha **solução única** e respeite todas as regras.
 
 ---
 
@@ -356,4 +362,4 @@ Bom jogo! 🎯
 ---
 
 **Última atualização:** Junho de 2026  
-**Versão:** 1.1.0
+**Versão:** 1.2.0

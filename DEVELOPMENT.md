@@ -63,10 +63,12 @@ function loadPlayerData() { ... }
 function savePlayerData() { ... }
 function updateStreak() { ... }
 
-// 3. Game data
-var puzzleBank = [ ... ]  // 3 puzzles padrão
-var cracks = [ ... ]      // Posições com "raio"
-var pairCols = [ ... ]    // Pares espelhados
+// 3. Game data (geração dinâmica)
+function generatePuzzle(seed, config)  // cria tabuleiro do dia
+function enumerateValidRows(cracks)    // todas as linhas válidas
+var difficultyByWeekday = { ... }      // dificuldade por dia
+var cracks, givens, fixedSet           // populados a cada dia
+var pairCols = [ ... ]                  // pares espelhados
 
 // 4. UI elements
 var boardEl, statusEl, gameScreen, completedScreen
@@ -86,55 +88,43 @@ function showCompletedScreen() { ... }
 
 ## 🔧 Como Modificar
 
-### Adicionar um Novo Puzzle
+### Como os Puzzles São Gerados
 
-1. Abra `index.html` em um editor
-2. Procure por `var puzzleBank = [`
-3. Adicione um novo array 6×6:
+O jogo gera um tabuleiro novo a cada dia em vez de usar um banco fixo. A função `generatePuzzle(seed, config)` constrói um tabuleiro válido a partir de uma semente derivada da data. Por ser determinística, a mesma data sempre gera o mesmo tabuleiro — então todos os jogadores veem o mesmo desafio no mesmo dia.
+
+A dificuldade é controlada por `difficultyByWeekday`:
 
 ```javascript
-var puzzleBank = [
-  // Puzzle 1
-  [
-    ['sun','moon','star','star','moon','sun'],
-    ['moon','star','sun','sun','star','moon'],
-    // ... 4 linhas mais
-  ],
-  // Puzzle 2
-  [ ... ],
-  // Seu novo puzzle aqui:
-  [
-    ['moon','star','sun','sun','star','moon'],
-    ['sun','moon','star','star','moon','sun'],
-    // ... 4 linhas mais
-  ],
-];
+var difficultyByWeekday = {
+  1: {crackRows:1, extra:3}, // Segunda - mais fácil
+  2: {crackRows:1, extra:2}, // Terça
+  3: {crackRows:2, extra:2}, // Quarta
+  4: {crackRows:2, extra:1}, // Quinta
+  5: {crackRows:3, extra:1}, // Sexta
+  6: {crackRows:3, extra:0}, // Sábado
+  0: {crackRows:4, extra:0}  // Domingo - mais difícil
+};
 ```
 
-### Mudar as Regras
+- `crackRows`: número de linhas com pares "raio" (mais = mais difícil)
+- `extra`: células reveladas além do mínimo necessário (mais = mais fácil)
 
-#### 1. Modificar Pares "Crack" (Raio)
+### As Regras do Jogo
 
-Procure por:
+#### 1. Pares "Crack" (Raio)
+
+Os pares com raio são definidos dinamicamente pelo gerador (variável `cracks`, um array por linha). Cada linha lista os índices de pares (0, 1 ou 2) que devem ter símbolos **diferentes** em vez de iguais.
+
+**Nota matemática:** uma linha só pode ter 0, 2 ou 3 pares-raio. Ter exatamente 1 par-raio torna impossível satisfazer a regra de "1 de cada símbolo por lado", então o gerador usa sempre 2 cracks por linha de raio.
+
+#### 2. Regra dos Símbolos por Lado
+
+Cada lado da linha do espelho (3 quadrados) deve ter exatamente 1 sol, 1 lua e 1 estrela. Isso é checado em `verify()` separando as contagens do lado esquerdo (`countsL`) e direito (`countsR`):
+
 ```javascript
-var cracks = [[],[],[1,2],[0,2],[],[]];
+var leftBad  = filled && (countsL.sun!==1 || countsL.moon!==1 || countsL.star!==1);
+var rightBad = filled && (countsR.sun!==1 || countsR.moon!==1 || countsR.star!==1);
 ```
-
-Explique:
-- Cada índice = uma linha (0-5)
-- Valores = índices de pares que devem ser **diferentes**
-- `cracks[2] = [1,2]` significa linha 2, pares 1 e 2 têm raio
-
-#### 2. Modificar Contagem de Símbolos
-
-Procure por na função `verify()`:
-```javascript
-if(filled && (counts.sun!==2 || counts.moon!==2 || counts.star!==2)){
-  // Linha violou regra
-}
-```
-
-Mude os números para diferentes totais.
 
 ### Mudar Cores
 
@@ -469,4 +459,4 @@ var x = Math.floor(brasilia.getTime() / 86400000);
 ---
 
 **Última atualização:** Junho 2026  
-**Versão:** 1.1.0
+**Versão:** 1.2.0

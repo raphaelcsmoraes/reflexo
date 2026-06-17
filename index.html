@@ -115,11 +115,11 @@
             <li>Elas devem ter símbolos <em>diferentes</em> de seus pares</li>
           </ul>
         </li>
-        <li style="margin-top:8px;"><strong>Cada linha deve conter exatamente:</strong>
+        <li style="margin-top:8px;"><strong>Cada lado da linha deve ter 1 de cada símbolo</strong>
           <ul>
-            <li>2 Sóis <span class="rule-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--sun)"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span></li>
-            <li>2 Luas <span class="rule-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--moon)"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg></span></li>
-            <li>2 Estrelas <span class="rule-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="color:var(--star)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21 12 17.77 5.82 21 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span></li>
+            <li>De cada lado da linha do espelho (3 quadrados), deve haver exatamente:</li>
+            <li>1 Sol <span class="rule-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--sun)"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>, 1 Lua <span class="rule-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--moon)"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg></span> e 1 Estrela <span class="rule-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="color:var(--star)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21 12 17.77 5.82 21 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span></li>
+            <li>Ou seja, símbolos iguais nunca se repetem do mesmo lado</li>
           </ul>
         </li>
       </ol>
@@ -241,41 +241,131 @@
     return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 24 24" '+attrs+' style="vertical-align:-2px;'+colorStyle+'" aria-hidden="true">' + ICONS[name] + '</svg>';
   }
 
-  var puzzleBank = [
-    [
-      ['sun','moon','star','star','moon','sun'],
-      ['moon','star','sun','sun','star','moon'],
-      ['star','sun','moon','sun','moon','star'],
-      ['moon','sun','star','moon','sun','star'],
-      ['star','sun','moon','moon','sun','star'],
-      ['sun','star','moon','moon','star','sun']
-    ],
-    [
-      ['moon','star','sun','sun','star','moon'],
-      ['star','sun','moon','moon','sun','star'],
-      ['sun','moon','star','moon','star','sun'],
-      ['star','moon','sun','star','moon','sun'],
-      ['sun','moon','star','star','moon','sun'],
-      ['moon','sun','star','star','sun','moon']
-    ],
-    [
-      ['star','sun','moon','moon','sun','star'],
-      ['sun','moon','star','star','moon','sun'],
-      ['moon','star','sun','star','sun','moon'],
-      ['sun','star','moon','sun','star','moon'],
-      ['moon','star','sun','sun','star','moon'],
-      ['star','moon','sun','sun','moon','star']
-    ]
-  ];
-  
-  var cracks = [[],[],[1,2],[0,2],[],[]];
   var pairCols = [[0,5],[1,4],[2,3]];
-  var givens = [[0,0],[1,2],[2,0],[2,1],[3,3],[4,5],[5,1],[5,4]];
-  var fixedSet = new Set(givens.map(function(g){ return g[0]+'_'+g[1]; }));
-  var crackCellSet = new Set();
-  cracks.forEach(function(rowCracks,r){
-    rowCracks.forEach(function(pi){ pairCols[pi].forEach(function(c){ crackCellSet.add(r+'_'+c); }); });
-  });
+  var symbolsArr = ['sun','moon','star'];
+
+  // Gerador de numeros pseudo-aleatorios com semente (mulberry32)
+  function makeRng(seed){
+    return function(){
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function shuffleArr(arr, rng){
+    var a = arr.slice();
+    for(var i=a.length-1;i>0;i--){
+      var j = Math.floor(rng()*(i+1));
+      var t=a[i]; a[i]=a[j]; a[j]=t;
+    }
+    return a;
+  }
+
+  // Enumera todas as linhas validas para um dado conjunto de pares "crack"
+  // Regra: cada lado da linha (3 quadrados) tem exatamente 1 sol, 1 lua, 1 estrela
+  var leftCols = [0,1,2];
+  var rightCols = [3,4,5];
+  function enumerateValidRows(rowCracks){
+    var valid = [];
+    function options(pi){
+      var isCrack = rowCracks.indexOf(pi)!==-1;
+      var opts = [];
+      for(var i=0;i<3;i++){
+        for(var j=0;j<3;j++){
+          if(isCrack && i===j) continue;
+          if(!isCrack && i!==j) continue;
+          opts.push([symbolsArr[i], symbolsArr[j]]);
+        }
+      }
+      return opts;
+    }
+    var o0=options(0), o1=options(1), o2=options(2);
+    for(var a=0;a<o0.length;a++){
+      for(var b=0;b<o1.length;b++){
+        for(var c=0;c<o2.length;c++){
+          var row=[null,null,null,null,null,null];
+          row[pairCols[0][0]]=o0[a][0]; row[pairCols[0][1]]=o0[a][1];
+          row[pairCols[1][0]]=o1[b][0]; row[pairCols[1][1]]=o1[b][1];
+          row[pairCols[2][0]]=o2[c][0]; row[pairCols[2][1]]=o2[c][1];
+          var ctL={sun:0,moon:0,star:0}, ctR={sun:0,moon:0,star:0};
+          for(var k=0;k<3;k++){ ctL[row[leftCols[k]]]++; ctR[row[rightCols[k]]]++; }
+          if(ctL.sun===1&&ctL.moon===1&&ctL.star===1&&ctR.sun===1&&ctR.moon===1&&ctR.star===1){
+            valid.push(row);
+          }
+        }
+      }
+    }
+    return valid;
+  }
+
+  function countRowSolutions(rowCracks, givenRow){
+    var validRows = enumerateValidRows(rowCracks);
+    var count = 0;
+    for(var i=0;i<validRows.length;i++){
+      var match = true;
+      for(var c=0;c<6;c++){
+        if(givenRow[c]!==null && validRows[i][c]!==givenRow[c]){ match=false; break; }
+      }
+      if(match) count++;
+    }
+    return count;
+  }
+
+  // Gera um tabuleiro completo, valido, a partir de uma semente e dificuldade
+  function generatePuzzle(seed, config){
+    var rng = makeRng(seed);
+    var cracks = [[],[],[],[],[],[]];
+    var rowIndices = shuffleArr([0,1,2,3,4,5], rng);
+    for(var i=0;i<config.crackRows;i++){
+      var r = rowIndices[i];
+      cracks[r] = shuffleArr([0,1,2], rng).slice(0,2).sort();
+    }
+    var solutionBoard = [];
+    for(var r=0;r<6;r++){
+      var validRows = enumerateValidRows(cracks[r]);
+      solutionBoard.push(validRows[Math.floor(rng()*validRows.length)]);
+    }
+    // Escolhe celulas reveladas garantindo solucao unica por linha
+    var givensList = [];
+    for(var r=0;r<6;r++){
+      var revealed=[null,null,null,null,null,null];
+      var positions = shuffleArr([0,1,2,3,4,5], rng);
+      var pi=0;
+      while(countRowSolutions(cracks[r], revealed)>1 && pi<positions.length){
+        var c=positions[pi];
+        revealed[c]=solutionBoard[r][c];
+        givensList.push([r,c]);
+        pi++;
+      }
+      // Revela celulas extras para ajustar dificuldade
+      for(var e=0;e<config.extra && pi<positions.length;e++){
+        var c2=positions[pi];
+        if(revealed[c2]===null){
+          revealed[c2]=solutionBoard[r][c2];
+          givensList.push([r,c2]);
+        }
+        pi++;
+      }
+    }
+    return {solution:solutionBoard, cracks:cracks, givens:givensList};
+  }
+
+  // Dificuldade por dia da semana (0=Dom, 1=Seg ... 6=Sab no getDay)
+  // Curva suave: Segunda mais facil, Domingo mais dificil
+  var difficultyByWeekday = {
+    1: {crackRows:1, extra:3}, // Segunda - mais facil
+    2: {crackRows:1, extra:2}, // Terca
+    3: {crackRows:2, extra:2}, // Quarta
+    4: {crackRows:2, extra:1}, // Quinta
+    5: {crackRows:3, extra:1}, // Sexta
+    6: {crackRows:3, extra:0}, // Sabado
+    0: {crackRows:4, extra:0}  // Domingo - mais dificil
+  };
+
+  var pairColsRef = pairCols;
+  var cracks, givens, fixedSet, crackCellSet;
 
   var order = ['sun','moon','star'];
   var colorMap = {sun:'var(--sun)',moon:'var(--moon)',star:'var(--star)'};
@@ -295,13 +385,15 @@
   var hintCooldownEnd = 0;
   var hintCooldownInterval = null;
 
-  function getPuzzleIndex(){
+  // Numero do dia desde epoch (no fuso de Brasilia) - muda a cada dia
+  function getDayNumber(){
     var brasilia = getBrasiliaNow();
-    var daysSinceEpoch = Math.floor(brasilia.getTime() / 86400000);
-    var n = puzzleBank.length;
-    var idx = daysSinceEpoch % n;
-    if(idx<0) idx += n;
-    return idx;
+    return Math.floor(brasilia.getTime() / 86400000);
+  }
+
+  // Dia da semana em Brasilia (0=Dom ... 6=Sab)
+  function getWeekday(){
+    return getBrasiliaNow().getDay();
   }
 
   function formatTime(s){
@@ -403,8 +495,14 @@
     for(var r=0;r<6;r++){
       var row = board[r];
       var filled = true;
-      var counts = {sun:0,moon:0,star:0};
-      row.forEach(function(v){ if(v===null){ filled=false; } else { counts[v]++; } });
+      var countsL = {sun:0,moon:0,star:0};
+      var countsR = {sun:0,moon:0,star:0};
+      for(var c=0;c<6;c++){
+        var v = row[c];
+        if(v===null){ filled=false; }
+        else if(c<3){ countsL[v]++; }
+        else { countsR[v]++; }
+      }
       if(!filled) hasEmpty = true;
       
       var lineHasError = false;
@@ -427,12 +525,14 @@
         }
       });
       
-      if(filled && (counts.sun!==2 || counts.moon!==2 || counts.star!==2)){
-        for(var c=0;c<6;c++){ 
-          if(!fixedSet.has(r+'_'+c)){ 
-            newErrorCells.add(r+'_'+c); 
-          }
-        }
+      var leftBad = filled && (countsL.sun!==1 || countsL.moon!==1 || countsL.star!==1);
+      var rightBad = filled && (countsR.sun!==1 || countsR.moon!==1 || countsR.star!==1);
+      if(leftBad){
+        for(var c=0;c<3;c++){ if(!fixedSet.has(r+'_'+c)){ newErrorCells.add(r+'_'+c); } }
+        lineHasError = true;
+      }
+      if(rightBad){
+        for(var c=3;c<6;c++){ if(!fixedSet.has(r+'_'+c)){ newErrorCells.add(r+'_'+c); } }
         lineHasError = true;
       }
       
@@ -504,12 +604,29 @@
   }
 
   function loadPuzzle(){
-    var idx = getPuzzleIndex();
-    solution = puzzleBank[idx];
+    var dayNumber = getDayNumber();
+    var weekday = getWeekday();
+    var config = difficultyByWeekday[weekday];
+    // Semente combina o dia (muda diariamente) com um multiplicador fixo
+    var seed = (dayNumber * 2654435761) ^ 0x9E3779B9;
+    var puzzle = generatePuzzle(seed >>> 0, config);
+
+    solution = puzzle.solution;
+    cracks = puzzle.cracks;
+    givens = puzzle.givens;
+    fixedSet = new Set(givens.map(function(g){ return g[0]+'_'+g[1]; }));
+    crackCellSet = new Set();
+    cracks.forEach(function(rowCracks, r){
+      rowCracks.forEach(function(pi){ pairColsRef[pi].forEach(function(c){ crackCellSet.add(r+'_'+c); }); });
+    });
+
     board = solution.map(function(row,r){ return row.map(function(val,c){ return fixedSet.has(r+'_'+c) ? val : null; }); });
     errorCells = new Set();
     statusEl.textContent = '';
-    dayEl.textContent = 'Reflexo do dia: nº ' + (idx+1);
+
+    var weekdayNames = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+    dayEl.textContent = 'Reflexo de ' + weekdayNames[weekday];
+
     hintCooldownEnd = 0;
     updateHintButton();
     startTimer();

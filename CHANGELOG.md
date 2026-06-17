@@ -5,6 +5,21 @@ Todas as mudanças notáveis do Reflexo são documentadas neste arquivo.
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
+## [1.2.0] - 2026-06-16
+
+### Adicionado
+- **Gerador automático de puzzles** — Cada dia gera um tabuleiro novo e único, derivado da data. Os puzzles nunca se repetem e nunca acabam
+- **Curva de dificuldade semanal** — A dificuldade sobe suavemente de segunda (mais fácil) a domingo (mais difícil), ajustando o número de pares "raio" e de células reveladas
+- **Garantia de solução única** — Todo tabuleiro gerado tem exatamente uma solução possível
+
+### Alterado
+- **Nova regra de símbolos** — Antes cada linha precisava de 2 sóis, 2 luas e 2 estrelas no total. Agora cada lado da linha do espelho (3 quadrados) deve ter exatamente 1 de cada símbolo. Isso evita situações como dois sóis do mesmo lado e torna o reflexo mais elegante
+- O indicador do topo agora mostra o dia da semana ("Reflexo de Quarta") em vez de um número
+- O texto do guia "Como Jogar" foi atualizado para refletir a nova regra
+
+### Removido
+- Banco fixo de 3 puzzles (substituído pelo gerador)
+
 ## [1.1.0] - 2026-06-16
 
 ### Adicionado
@@ -35,5 +50,6 @@ e este projeto segue o [Versionamento Semântico](https://semver.org/lang/pt-BR/
 - Progresso salvo localmente no navegador
 - Design responsivo e sem dependências externas
 
-[1.1.0]: https://github.com/seu-usuario/reflexo/releases/tag/v1.1.0
-[1.0.0]: https://github.com/seu-usuario/reflexo/releases/tag/v1.0.0
+[1.2.0]: https://github.com/raphaelcsmoraes/reflexo/releases/tag/v1.2.0
+[1.1.0]: https://github.com/raphaelcsmoraes/reflexo/releases/tag/v1.1.0
+[1.0.0]: https://github.com/raphaelcsmoraes/reflexo/releases/tag/v1.0.0

@@ -15,7 +15,12 @@ Reflexo é inspirado em jogos diários populares como Wordle, mas com foco em si
 ### Características
 
 - **Um puzzle por dia** — Um novo desafio diário à meia-noite (horário de Brasília)
+- **Sistema de dicas** — Peça uma dica quando travar (com cooldown de 15 segundos)
+- **Destaque de erros** — Linhas com erro são destacadas visualmente ao verificar
 - **Rastreamento de sequência** — Mantenha sua sequência de dias consecutivos jogados
+- **Cronômetro persistente** — O tempo continua mesmo se você atualizar a página
+- **Tela de conclusão** — Veja seu tempo e sequência ao completar, com contagem regressiva para o próximo puzzle
+- **Guia de regras integrado** — Painel "Como Jogar" completo dentro do jogo
 - **Progresso persistente** — Seu progresso é salvo automaticamente no navegador
 - **Sem login necessário** — Jogue anonimamente ou em múltiplos dispositivos
 - **Design minimalista** — Interface limpa e focada no jogo
@@ -60,6 +65,22 @@ Reflexo é inspirado em jogos diários populares como Wordle, mas com foco em si
 - Ganhe **+1 dia** cada vez que completa o puzzle
 - Se você **pular um dia**, o contador volta a **0**
 - Seu streak é armazenado localmente e sincronizado automaticamente
+
+### Cronômetro Persistente
+- O tempo começa a contar quando você abre o puzzle do dia
+- Continua de onde parou se você **atualizar a página**
+- O botão "Reiniciar" limpa o tabuleiro mas **não** zera o tempo
+- Recomeça automaticamente do zero no dia seguinte
+
+### Sistema de Dicas
+- Clique em "Dica" para revelar uma célula vazia aleatória
+- Após usar, há um **cooldown de 15 segundos** antes da próxima dica
+- O botão mostra a contagem regressiva durante o cooldown
+
+### Destaque de Erros
+- Ao clicar em "Verificar", as linhas que violam as regras são destacadas
+- A mensagem informa quantas linhas têm erro
+- Ajuda a identificar onde corrigir sem entregar a resposta
 
 ### Visualização do Progresso
 Quando você completa um puzzle, vê:
@@ -141,6 +162,11 @@ localStorage.getItem('reflexo_game_2026-06-16')
 //   completed: true,
 //   time: 342  // segundos
 // }
+
+// Horário de início do cronômetro (permite que o tempo
+// sobreviva a refreshes da página)
+localStorage.getItem('reflexo_timer_start_2026-06-16')
+// 1718560000000  (timestamp em milissegundos)
 ```
 
 **Privacidade:** Nenhum dado é enviado para servidores. Tudo fica no seu dispositivo.
@@ -240,7 +266,10 @@ O Reflexo é o primeiro de uma série de quebra-cabeças diários:
 
 ### Recursos Futuros
 
-- [ ] Sistema de dicas
+- [x] Sistema de dicas (com cooldown)
+- [x] Cronômetro persistente
+- [x] Destaque visual de erros
+- [ ] Limite de dicas por dia
 - [ ] Estatísticas detalhadas (tempos, taxas de vitória)
 - [ ] Temas customizáveis
 - [ ] Temas escuro/claro
@@ -327,4 +356,4 @@ Bom jogo! 🎯
 ---
 
 **Última atualização:** Junho de 2026  
-**Versão:** 1.0.0
+**Versão:** 1.1.0

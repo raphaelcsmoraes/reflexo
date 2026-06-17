@@ -29,7 +29,7 @@
   }
   *{box-sizing:border-box;}
   body{margin:0;background:var(--bg);color:var(--text-primary);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;}
-  .card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;width:100%;max-width:380px;}
+  .card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;width:100%;max-width:380px;}
   .header-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
   .avatar{width:44px;height:44px;border-radius:50%;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--accent);}
   .header-text{flex:1;}
@@ -38,20 +38,33 @@
   .meta-line{font-size:13px;color:var(--text-secondary);display:flex;align-items:center;gap:4px;}
   .icon-btn{width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--border-strong);border-radius:var(--radius-md);background:#fff;cursor:pointer;color:var(--text-primary);}
   .icon-btn:hover{background:var(--bg-secondary);}
-  .rules-panel{display:none;font-size:13px;color:var(--text-secondary);background:var(--bg-secondary);border-radius:var(--radius-md);padding:10px 12px;margin:0 0 16px;line-height:1.6;}
+  .rules-panel{display:none;font-size:13px;color:var(--text-secondary);background:var(--bg-secondary);border-radius:var(--radius-md);padding:14px 16px;margin:0 0 16px;line-height:1.6;}
+  .rules-panel h3{font-size:15px;color:var(--text-primary);margin:16px 0 8px;font-weight:600;}
+  .rules-panel h3:first-child{margin-top:0;}
+  .rules-panel ul{margin:6px 0;padding-left:18px;}
+  .rules-panel ul ul{margin:4px 0;}
+  .rules-panel li{margin:4px 0;}
+  .rules-panel ol{margin:6px 0;padding-left:18px;}
+  .rules-panel strong{color:var(--text-primary);}
+  .rules-panel .rule-icon{display:inline-flex;vertical-align:-3px;margin:0 1px;}
   .divider{border-top:1px solid var(--border);padding-top:16px;}
   .legend{display:flex;gap:10px;align-items:center;font-size:12px;color:var(--text-secondary);margin-bottom:14px;flex-wrap:nowrap;overflow-x:auto;}
   .legend span{white-space:nowrap;display:inline-flex;align-items:center;gap:3px;}
-  #board{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;width:100%;max-width:312px;margin:0 auto 16px;}
-  .mirror-cell{position:relative;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;border:1px solid var(--border);border-radius:var(--radius-md);cursor:pointer;transition:background-color .15s ease,border-color .15s ease;}
+  #board{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;width:100%;max-width:280px;margin:0 auto 14px;}
+  .mirror-cell{position:relative;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;border:1px solid var(--border);border-radius:var(--radius-md);cursor:pointer;transition:background-color .15s ease,border-color .15s ease;min-height:40px;}
   .mirror-cell:hover{background:var(--bg-secondary);}
   .mirror-cell.fixed{background:var(--bg-secondary);cursor:default;}
   .mirror-cell:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .mirror-cell.mirror-edge::before{content:'';position:absolute;right:-4px;top:0;bottom:0;width:2px;border-right:2px dashed var(--accent);pointer-events:none;}
+  .error-row{background:rgba(178, 58, 51, 0.10) !important;}
   .crack-badge{position:absolute;top:2px;right:2px;line-height:1;color:var(--text-secondary);}
   .controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
-  button{font-family:inherit;font-size:14px;border:1px solid var(--border-strong);background:#fff;color:var(--text-primary);border-radius:var(--radius-md);padding:8px 14px;cursor:pointer;transition:background-color .15s ease;display:inline-flex;align-items:center;gap:6px;}
+  button{font-family:inherit;font-size:13px;border:1px solid var(--border-strong);background:#fff;color:var(--text-primary);border-radius:var(--radius-md);padding:7px 12px;cursor:pointer;transition:background-color .15s ease;display:inline-flex;align-items:center;gap:5px;}
   button:hover{background:var(--bg-secondary);}
   button:active{transform:scale(0.98);}
+  button:disabled{opacity:0.5;cursor:not-allowed;}
+  button:disabled:hover{background:#fff;}
+  button:disabled:active{transform:none;}
   #status{font-size:14px;min-height:20px;margin:0;color:var(--text-secondary);}
   .completed-screen{display:none;text-align:center;padding-top:20px;}
   .completed-screen h2{margin:0 0 16px;font-size:22px;color:var(--success);}
@@ -80,10 +93,43 @@
       </button>
     </div>
     <div class="rules-panel" id="rules-panel">
-      <strong>Regras:</strong><br><br>
-      • Os pares espelhados devem ter o mesmo símbolo.<br>
-      • Exceção: Pares com o ícone de raio devem ter símbolos diferentes.<br>
-      • Cada linha deve conter exatamente 2 sóis, 2 luas e 2 estrelas.
+      <h3>O Tabuleiro</h3>
+      <ul>
+        <li>Tabuleiro <strong>6×6</strong> com uma linha espelho no centro (coluna 3)</li>
+        <li>Algumas células já estão preenchidas (essas não podem ser alteradas)</li>
+        <li>Você preenche as células vazias com os símbolos: <span class="rule-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--sun)"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span> Sol, <span class="rule-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--moon)"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg></span> Lua, <span class="rule-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="color:var(--star)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21 12 17.77 5.82 21 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span> Estrela</li>
+      </ul>
+      
+      <h3>As Regras</h3>
+      <ol>
+        <li><strong>Os pares espelhados devem ter o mesmo símbolo</strong>
+          <ul>
+            <li>A célula (linha 1, coluna 1) deve ter o mesmo símbolo que (linha 1, coluna 6)</li>
+            <li>A célula (linha 1, coluna 2) deve ter o mesmo símbolo que (linha 1, coluna 5)</li>
+            <li>E assim por diante...</li>
+          </ul>
+        </li>
+        <li style="margin-top:8px;"><strong>Exceção: Pares com raio (<span class="rule-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="color:var(--text-secondary)"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></span>) devem ter símbolos diferentes</strong>
+          <ul>
+            <li>Essas células marcadas com um ícone de raio NÃO seguem a regra de simetria</li>
+            <li>Elas devem ter símbolos <em>diferentes</em> de seus pares</li>
+          </ul>
+        </li>
+        <li style="margin-top:8px;"><strong>Cada linha deve conter exatamente:</strong>
+          <ul>
+            <li>2 Sóis <span class="rule-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--sun)"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span></li>
+            <li>2 Luas <span class="rule-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--moon)"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg></span></li>
+            <li>2 Estrelas <span class="rule-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="color:var(--star)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21 12 17.77 5.82 21 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></span></li>
+          </ul>
+        </li>
+      </ol>
+      
+      <h3>Como Ganhar</h3>
+      <ol>
+        <li>Preencha todas as células vazias</li>
+        <li>Clique em "Verificar"</li>
+        <li>Se todas as regras forem seguidas, o puzzle estará completo!</li>
+      </ol>
     </div>
     <div class="divider">
       <div class="legend">
@@ -94,6 +140,7 @@
       </div>
       <div id="board"></div>
       <div class="controls">
+        <button id="hint-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg><span id="hint-text">Dica</span></button>
         <button id="verify-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>Verificar</button>
         <button id="reset-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>Reiniciar</button>
       </div>
@@ -245,6 +292,8 @@
   var timerInterval = null;
   var elapsedSeconds = 0;
   var countdownInterval = null;
+  var hintCooldownEnd = 0;
+  var hintCooldownInterval = null;
 
   function getPuzzleIndex(){
     var brasilia = getBrasiliaNow();
@@ -261,15 +310,33 @@
     return (m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
   }
 
+  function getTimerStartKey(){
+    return 'reflexo_timer_start_' + getTodayKeyBrasilia();
+  }
+
+  function getTimerStart(){
+    var stored = localStorage.getItem(getTimerStartKey());
+    if(stored){
+      return parseInt(stored, 10);
+    }
+    var now = Date.now();
+    localStorage.setItem(getTimerStartKey(), String(now));
+    return now;
+  }
+
   function updateTimerDisplay(){
     timerEl.innerHTML = iconSvg('clock',14) + formatTime(elapsedSeconds);
   }
 
   function startTimer(){
     if(timerInterval){ clearInterval(timerInterval); }
-    elapsedSeconds = 0;
+    var startTime = getTimerStart();
+    elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
     updateTimerDisplay();
-    timerInterval = setInterval(function(){ elapsedSeconds++; updateTimerDisplay(); }, 1000);
+    timerInterval = setInterval(function(){
+      elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+      updateTimerDisplay();
+    }, 1000);
   }
 
   function stopTimer(){
@@ -279,20 +346,27 @@
   function render(){
     boardEl.innerHTML='';
     for(var r=0;r<6;r++){
+      var rowHasError = false;
+      for(var c=0;c<6;c++){
+        if(errorCells.has(r+'_'+c)){
+          rowHasError = true;
+          break;
+        }
+      }
+      
       for(var c=0;c<6;c++){
         (function(r,c){
           var key = r+'_'+c;
           var val = board[r][c];
           var isFixed = fixedSet.has(key);
+          var hasError = errorCells.has(key);
           var cell = document.createElement('div');
-          cell.className = 'mirror-cell' + (isFixed?' fixed':'');
+          cell.className = 'mirror-cell' + (isFixed?' fixed':'') + (rowHasError?' error-row':'') + (c===2?' mirror-edge':'');
           cell.tabIndex = 0;
           cell.setAttribute('role','button');
           cell.setAttribute('aria-label','linha '+(r+1)+', coluna '+(c+1)+': '+(val?labelMap[val]:'vazia'));
-          if(c===2){ cell.style.borderRight = '2px dashed var(--accent)'; }
-          if(errorCells.has(key)){ cell.style.border = '2px solid var(--danger)'; }
           if(val){
-            cell.innerHTML = iconSvg(val, 22, colorMap[val]);
+            cell.innerHTML = iconSvg(val, 18, colorMap[val]);
           }
           if(crackCellSet.has(key)){
             var badge = document.createElement('span');
@@ -304,6 +378,7 @@
             cell.addEventListener('click', function(){ handleClick(r,c); });
             cell.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); handleClick(r,c); } });
           }
+          
           boardEl.appendChild(cell);
         })(r,c);
       }
@@ -323,32 +398,59 @@
   function verify(){
     var newErrorCells = new Set();
     var hasEmpty = false;
+    var errorLines = new Set();
+    
     for(var r=0;r<6;r++){
       var row = board[r];
       var filled = true;
       var counts = {sun:0,moon:0,star:0};
       row.forEach(function(v){ if(v===null){ filled=false; } else { counts[v]++; } });
       if(!filled) hasEmpty = true;
+      
+      var lineHasError = false;
+      
       pairCols.forEach(function(pair,pi){
         var a = pair[0], b = pair[1];
         var va = row[a], vb = row[b];
         if(va!==null && vb!==null){
           var isCrack = cracks[r].indexOf(pi)!==-1;
-          if(isCrack && va===vb){ newErrorCells.add(r+'_'+a); newErrorCells.add(r+'_'+b); }
-          if(!isCrack && va!==vb){ newErrorCells.add(r+'_'+a); newErrorCells.add(r+'_'+b); }
+          if(isCrack && va===vb){ 
+            newErrorCells.add(r+'_'+a); 
+            newErrorCells.add(r+'_'+b);
+            lineHasError = true;
+          }
+          if(!isCrack && va!==vb){ 
+            newErrorCells.add(r+'_'+a); 
+            newErrorCells.add(r+'_'+b);
+            lineHasError = true;
+          }
         }
       });
+      
       if(filled && (counts.sun!==2 || counts.moon!==2 || counts.star!==2)){
-        for(var c=0;c<6;c++){ if(!fixedSet.has(r+'_'+c)){ newErrorCells.add(r+'_'+c); } }
+        for(var c=0;c<6;c++){ 
+          if(!fixedSet.has(r+'_'+c)){ 
+            newErrorCells.add(r+'_'+c); 
+          }
+        }
+        lineHasError = true;
+      }
+      
+      if(lineHasError){
+        errorLines.add(r);
       }
     }
+    
     errorCells = newErrorCells;
     render();
+    
     if(hasEmpty){
       statusEl.textContent = 'ainda faltam celulas vazias.';
       statusEl.style.color = 'var(--text-secondary)';
     } else if(newErrorCells.size>0){
-      statusEl.textContent = 'quase la, as celulas marcadas ainda nao seguem as regras.';
+      var errorCount = errorLines.size;
+      var lineText = errorCount === 1 ? 'linha' : 'linhas';
+      statusEl.textContent = errorCount + ' ' + lineText + ' com erro. Verifique os quadrados marcados.';
       statusEl.style.color = 'var(--warning)';
     } else {
       stopTimer();
@@ -363,7 +465,6 @@
     for(var r=0;r<6;r++){ for(var c=0;c<6;c++){ if(!fixedSet.has(r+'_'+c)){ board[r][c]=null; } } }
     errorCells = new Set();
     statusEl.textContent = '';
-    startTimer();
     render();
   }
 
@@ -408,13 +509,81 @@
     board = solution.map(function(row,r){ return row.map(function(val,c){ return fixedSet.has(r+'_'+c) ? val : null; }); });
     errorCells = new Set();
     statusEl.textContent = '';
-    dayEl.textContent = 'Reflexo do dia: nº ' + (idx+1) + ' de ' + puzzleBank.length;
+    dayEl.textContent = 'Reflexo do dia: nº ' + (idx+1);
+    hintCooldownEnd = 0;
+    updateHintButton();
     startTimer();
     render();
   }
 
+  function getRandomEmptyCell(){
+    var emptyCells = [];
+    for(var r=0;r<6;r++){
+      for(var c=0;c<6;c++){
+        if(!fixedSet.has(r+'_'+c) && board[r][c]===null){
+          emptyCells.push({r:r, c:c});
+        }
+      }
+    }
+    if(emptyCells.length===0) return null;
+    return emptyCells[Math.floor(Math.random()*emptyCells.length)];
+  }
+
+  function useHint(){
+    var now = Date.now();
+    if(now < hintCooldownEnd){
+      statusEl.textContent = 'Próxima dica em alguns segundos...';
+      statusEl.style.color = 'var(--text-secondary)';
+      return;
+    }
+    
+    var cell = getRandomEmptyCell();
+    if(!cell){
+      statusEl.textContent = 'Nenhuma célula vazia disponível!';
+      statusEl.style.color = 'var(--text-secondary)';
+      return;
+    }
+    
+    board[cell.r][cell.c] = solution[cell.r][cell.c];
+    errorCells = new Set();
+    statusEl.textContent = '💡 Dica revelada! Próxima em 15 segundos.';
+    statusEl.style.color = 'var(--success)';
+    hintCooldownEnd = now + 15000;
+    render();
+    updateHintButton();
+  }
+
+  function updateHintButton(){
+    var now = Date.now();
+    var hintBtn = document.getElementById('hint-btn');
+    var hintText = document.getElementById('hint-text');
+    
+    if(now < hintCooldownEnd){
+      var secondsLeft = Math.ceil((hintCooldownEnd - now) / 1000);
+      hintBtn.disabled = true;
+      hintText.textContent = secondsLeft + 's';
+      
+      if(hintCooldownInterval) clearInterval(hintCooldownInterval);
+      hintCooldownInterval = setInterval(function(){
+        var nowInner = Date.now();
+        if(nowInner >= hintCooldownEnd){
+          hintBtn.disabled = false;
+          hintText.textContent = 'Dica';
+          clearInterval(hintCooldownInterval);
+        } else {
+          var secsLeft = Math.ceil((hintCooldownEnd - nowInner) / 1000);
+          hintText.textContent = secsLeft + 's';
+        }
+      }, 100);
+    } else {
+      hintBtn.disabled = false;
+      hintText.textContent = 'Dica';
+    }
+  }
+
   document.getElementById('verify-btn').addEventListener('click', verify);
   document.getElementById('reset-btn').addEventListener('click', resetBoard);
+  document.getElementById('hint-btn').addEventListener('click', useHint);
   document.getElementById('rules-btn').addEventListener('click', function(){
     var panel = document.getElementById('rules-panel');
     panel.style.display = panel.style.display==='none' || panel.style.display==='' ? 'block' : 'none';

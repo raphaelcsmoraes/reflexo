@@ -170,6 +170,17 @@ Abra o bloco `<style>` e modifique `:root`:
 }
 ```
 
+### Horário de Início do Cronômetro (por dia)
+```javascript
+// Chave: 'reflexo_timer_start_2026-06-16'
+1718560000000   // Timestamp em ms de quando o puzzle foi aberto
+```
+
+O cronômetro é calculado como a diferença entre `Date.now()` e este
+timestamp. Por isso o tempo sobrevive a refreshes e o botão "Reiniciar"
+não zera o relógio. A chave inclui a data, então um novo cronômetro é
+criado automaticamente a cada dia.
+
 ### Como Acessar no Console
 
 ```javascript
@@ -225,9 +236,30 @@ return new Date(utc + (3600000 * -5));  // Teste como se fosse EDT (UTC-5)
 ```
 1. Usuário clica em célula → handleClick(r, c)
 2. Cicla entre: vazio → sol → lua → estrela → vazio
-3. Clica "Verificar" → verify()
-4. Valida todas as regras
-5. Se válido → showCompletedScreen()
+3. (Opcional) Clica "Dica" → useHint() revela uma célula
+   - Inicia cooldown de 15s via updateHintButton()
+4. Clica "Verificar" → verify()
+5. Valida todas as regras
+   - Erros → linhas destacadas com classe .error-row
+   - Válido → showCompletedScreen()
+```
+
+### Sistema de Dicas
+```
+1. useHint() escolhe célula vazia aleatória (getRandomEmptyCell)
+2. Preenche com o valor da solução
+3. Define hintCooldownEnd = agora + 15000ms
+4. updateHintButton() desabilita o botão e mostra a contagem
+5. Quando o cooldown acaba, o botão reativa automaticamente
+```
+
+### Cronômetro
+```
+1. getTimerStart() lê (ou cria) o timestamp de início do dia
+2. elapsedSeconds = (agora - início) / 1000
+3. Atualiza a cada segundo via setInterval
+4. Reiniciar NÃO chama startTimer → tempo continua
+5. Refresh recupera o timestamp salvo → tempo continua
 ```
 
 ### Persistência
@@ -236,6 +268,7 @@ return new Date(utc + (3600000 * -5));  // Teste como se fosse EDT (UTC-5)
 2. Salva em localStorage:
    - reflexo_player (streak + lastPlayedKey)
    - reflexo_game_DATA (completed + time)
+   - reflexo_timer_start_DATA (timestamp de início)
 3. Na próxima visita → checkAndShowCompletedIfNeeded()
 ```
 
@@ -436,4 +469,4 @@ var x = Math.floor(brasilia.getTime() / 86400000);
 ---
 
 **Última atualização:** Junho 2026  
-**Versão:** 1.0.0
+**Versão:** 1.1.0
